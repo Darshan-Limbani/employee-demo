@@ -32,7 +32,8 @@ exports.addEmployee = async (req, res) => {
         const employee = await Employee.create(req.body);
 
         res.status(201).json({
-            status: 'success', results: await getTotal(), data: {
+            status: 'success',
+            data: {
                 data: employee
             }
         });
@@ -58,4 +59,24 @@ exports.deleteEmployee = async (req, res) => {
             status: 'failed', error: err.code, message: err.message, stack: err.stack
         });
     }
+};
+
+
+exports.updateEmployee = async (req, res) => {
+
+    try {
+        const empId = req.params.id;
+        const employee = await Employee.findByIdAndUpdate(empId, req.body, {runValidators: true, new: true});
+        res.status(200).json({
+            status: 'success',
+            data: {
+                data: employee
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 'failed', error: err.code, message: err.message, stack: err.stack
+        });
+    }
+
 };

@@ -149,12 +149,13 @@ const EmployeeForm = (props) => {
                         margin: "5px"
                     }}
                     >
-                        <Avatar src={profile}></Avatar>
+                        <Avatar src={profile} sx={{height: "50px", width: "50px"}}></Avatar>
                         <Button
                             variant="outlined"
                             component="label"
                             sx={{
                                 margin: "5px",
+                                marginLeft: "10px"
                             }}
                             disabled={`${disable}`}
                         >
