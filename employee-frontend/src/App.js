@@ -1,3 +1,6 @@
+import Button from "@mui/material/Button";
+import CssBaseline from '@mui/material/CssBaseline';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useEffect, useState} from "react";
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -5,25 +8,22 @@ import './App.css';
 import EmployeeTable from "./components/EmployeeTable.";
 import TransitionsModal from "./components/Model";
 
-function App(props) {
 
-    // const [fetchEmp, setFetchEmp] = useState(false);
-
-    /*    const [results, setResults] = useState();
-
-        const setTotal = (results) => {
-            setResults(results);
-        };*/
-
-
-    // const fetchEmployee = () => {
-    //     props.fetchEmpl();
-    // };
+function App() {
 
     const [employee, setEmployee] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [length, setLength] = useState(0);
+    const [mode, setMode] = useState('light');
+
+
+    const darkTheme = createTheme({
+        palette: {
+            mode: `${mode}`,
+        },
+    });
+
 
     useEffect(() => {
 
@@ -55,24 +55,40 @@ function App(props) {
         }
     }
 
+    const handleMode = () => {
+        setMode(mode === 'dark' ? 'light' : 'dark')
+    };
+
     return (
-        <div className={'container-center'}>
-            <ToastContainer/>
-            <div className={'container'}>
-                <div className={"btn-emp"}>
-                    <TransitionsModal getEmp={getEmp}/>
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline/>
+            <div className={'container-center'}>
+                <ToastContainer/>
+                <div className={'container'}>
+                    <div className={"btn-emp"}>
+                       {/* <Button
+                            variant="outlined"
+                            color="primary"
+
+                            onClick={handleMode}
+                            style={{marginRight: "10px"}}
+                        >
+                            {mode === 'dark' ? 'Turn light' : 'Turn dark'}
+                        </Button>*/}
+                        <TransitionsModal getEmp={getEmp}/>
+                    </div>
+                    {/*<EmployeeForm/>*/}
+                    <EmployeeTable
+                        employee={employee}
+                        page={page}
+                        rowsPerPage={rowsPerPage}
+                        length={length}
+                        setPage={setPage}
+                        setRowsPerPage={setRowsPerPage}
+                        getEmp={getEmp}/>
                 </div>
-                {/*<EmployeeForm/>*/}
-                <EmployeeTable
-                    employee={employee}
-                    page={page}
-                    rowsPerPage={rowsPerPage}
-                    length={length}
-                    setPage={setPage}
-                    setRowsPerPage={setRowsPerPage}
-                    getEmp={getEmp}/>
             </div>
-        </div>
+        </ThemeProvider>
 
     );
 }

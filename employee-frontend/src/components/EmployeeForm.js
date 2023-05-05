@@ -6,6 +6,7 @@ import {useState} from "react";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {storage} from "../firebase/firebaseConfig";
+import CircularProgressWithLabel from "./CircularProgressWithLabel";
 
 
 const INITIAL_STATE = {
@@ -22,6 +23,8 @@ const EmployeeForm = (props) => {
 
     const [percent, setPercent] = useState(0);
     const [employeeData, setEmployeeData] = useState(INITIAL_STATE);
+    const [profile, setProfile] = useState(null);
+    const [disable, setDisable] = useState("");
 
     async function addEmployee(empData) {
         const res = await fetch(`http://localhost:3000/employee`, {
@@ -56,6 +59,11 @@ const EmployeeForm = (props) => {
 
     const handleUpload = async (event) => {
         const file = event.target.files[0];
+        // console.log("FILES : ==========>",event.target.files[0]);
+        console.log("FILES : ==========>", URL.createObjectURL(file));
+        setProfile(URL.createObjectURL(file));
+        setDisable("disabled");
+
         if (!file) {
             alert("Please upload an image first!");
         }
@@ -75,12 +83,14 @@ const EmployeeForm = (props) => {
 
                 // update progress
                 setPercent(percent);
+                console.log(percent);
             },
             (err) => toast.error('Something went wrong while uploading Profile Picture!!', {autoClose: 3000}),
             () => {
                 // download url
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     console.log("AVATAR URL : ------------->", url);
+                    setDisable("");
                     setEmployeeData({...employeeData, profile: url});
                 });
             }
@@ -95,7 +105,7 @@ const EmployeeForm = (props) => {
         };
 
         try {
-            add().then();
+            add();
             // props.total(results);
         } catch (err) {
             console.log("ERROR:------>", err);
@@ -120,8 +130,8 @@ const EmployeeForm = (props) => {
                 marginTop: "0px",
                 height: "70px",
                 alignItems: 'center',
-                borderRadius: "5px"
-            }} className={'form-header'}>
+                borderRadius: "5px",
+            }}>
                 Add Employee
             </div>
             <div style={{
@@ -137,27 +147,30 @@ const EmployeeForm = (props) => {
                         flexDirection: "row",
                         alignItems: "center",
                         margin: "5px"
-                    }}>
-                        <Avatar></Avatar>
+                    }}
+                    >
+                        <Avatar src={profile}></Avatar>
                         <Button
                             variant="outlined"
                             component="label"
                             sx={{
                                 margin: "5px",
                             }}
+                            disabled={`${disable}`}
                         >
-                            {percent === 0 ? <p> Add Profile Picture</p> : percent > 0 ?
-                                <p> {percent} "% done"</p> : ""}
+                            {
+                                percent === 0 ? <p> Add Profile Picture</p> : percent === 100 ?
+                                    <p>Uploaded</p> : <CircularProgressWithLabel value={percent}/>
+                            }
                             <input
                                 required
                                 type="file"
                                 hidden
-                                accept="/image/*"
+                                accept="image/*"
                                 onChange={handleUpload}
                             />
                         </Button>
                     </FormControl>
-
 
                     <TextField
                         id="first_name"

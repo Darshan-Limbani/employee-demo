@@ -12,11 +12,11 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 500,
     bgcolor: 'background.paper',
     border: '2px solid dark-grey',
     boxShadow: 24,
-    p: 4,
+    p: 5,
     borderRadius: '5px'
 };
 
@@ -59,6 +59,7 @@ export default function TransitionsModal(props) {
                         timeout: 500,
                     },
                 }}
+
             >
                 <Fade in={open}>
                     <Box sx={style}>

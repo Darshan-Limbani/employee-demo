@@ -127,6 +127,7 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
     };
 
     const handleDeleteEmployee = async (id) => {
+        setShowLoader(true);
         const res = await fetch(`http://localhost:3000/employee/${id}`, {
             method: "DELETE"
         });
@@ -134,14 +135,14 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
         if (!res.ok) {
             // console.log(data);
             toast.error("Something went wrong!!");
+            setShowLoader(false);
 
         } else {
+            setShowLoader(false);
             getEmp();
             toast.success("Employee data deleted successfully!!");
         }
     };
-
-    console.log(" --------------------------->", employee);
 
     return (
         <Paper sx={{width: '80%', overflow: 'hidden'}}>
