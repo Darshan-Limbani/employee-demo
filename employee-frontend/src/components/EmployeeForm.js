@@ -24,7 +24,8 @@ const EmployeeForm = (props) => {
     const [percent, setPercent] = useState(0);
     const [employeeData, setEmployeeData] = useState(INITIAL_STATE);
     const [profile, setProfile] = useState(null);
-    const [disable, setDisable] = useState("");
+    const [disable, setDisable] = useState(false);
+    const [change, setChange] = useState(false);
 
     async function addEmployee(empData) {
         const res = await fetch(`http://localhost:3000/employee`, {
@@ -62,7 +63,7 @@ const EmployeeForm = (props) => {
         // console.log("FILES : ==========>",event.target.files[0]);
         console.log("FILES : ==========>", URL.createObjectURL(file));
         setProfile(URL.createObjectURL(file));
-        setDisable("disabled");
+        setDisable(true);
 
         if (!file) {
             alert("Please upload an image first!");
@@ -90,7 +91,9 @@ const EmployeeForm = (props) => {
                 // download url
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     console.log("AVATAR URL : ------------->", url);
-                    setDisable("");
+
+                    setDisable(false);
+                    setChange(true);
                     setEmployeeData({...employeeData, profile: url});
                 });
             }
@@ -157,11 +160,12 @@ const EmployeeForm = (props) => {
                                 margin: "5px",
                                 marginLeft: "10px"
                             }}
-                            disabled={`${disable}`}
+                            disabled={disable}
                         >
                             {
-                                percent === 0 ? <p> Add Profile Picture</p> : percent === 100 ?
-                                    <p>Uploaded</p> : <CircularProgressWithLabel value={percent}/>
+                                percent === 0 ? !change ? <p>Add Profile Picture</p> :
+                                    <CircularProgressWithLabel value={percent}/> : percent === 100 ?
+                                    <p>Change</p> : <CircularProgressWithLabel value={percent}/>
                             }
                             <input
                                 required

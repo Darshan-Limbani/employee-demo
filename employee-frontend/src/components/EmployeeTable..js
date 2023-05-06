@@ -89,7 +89,7 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
     const [employeeData, setEmployeeData] = useState(INITIAL_STATE);
     const [percent, setPercent] = useState(0);
     const [profile, setProfile] = useState(null);
-    const [disable, setDisable] = useState("");
+    const [disable, setDisable] = useState(false);
 
     const [open, setOpen] = React.useState(false);
 
@@ -201,7 +201,7 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
                 // download url
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     console.log("AVATAR URL : ------------->", url);
-                    setDisable("");
+                    setDisable(false);
                     setEmployeeData({...employeeData, profile: url});
                 });
             }
@@ -233,7 +233,7 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
 
 
     const handleSubmit = async (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         const res = await fetch(`http://localhost:3000/employee/${employeeData._id}`, {
             method: "PATCH",
             headers: {
@@ -243,9 +243,21 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
         });
         const data = await res.json();
         if (res.ok) {
-            console.log(data);
+            toast.success("Employee Data Updated Successfully!!", {
+                autoClose: 3000,
+                position: toast.POSITION.TOP_CENTER
+            });
+            // console.log(data);
         } else {
+            if (data?.error === 11000) {
+                console.log("ERROR");
+                return toast.error(`${data.message.toLowerCase().includes('email') ? 'Email ID' : 'Mobile Number'} already exists`, {
+                    autoClose: 3000,
+                    position: toast.POSITION.TOP_CENTER
+                });
+            }
         }
+        setOpen(false)
 
     };
 
@@ -266,6 +278,7 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
             getEmp();
             toast.success("Employee data deleted successfully!!");
         }
+
     };
 
     return (
@@ -307,7 +320,7 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
                                 alignItems: 'center',
                                 borderRadius: "5px",
                             }}>
-                                Add Employee
+                                Update Employee Details
                             </div>
                             <div style={{
                                 border: "1px solid #2e7fce",
@@ -324,7 +337,8 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
                                         margin: "5px"
                                     }}
                                     >
-                                        <Avatar src={profile} sx={{height: "50px", width: "50px"}}></Avatar>
+                                        <Avatar src={employeeData.profile}
+                                                sx={{height: "50px", width: "50px"}}></Avatar>
                                         <Button
                                             variant="outlined"
                                             component="label"
@@ -332,11 +346,11 @@ export default function EmployeeTable({page, length, rowsPerPage, employee, setR
                                                 margin: "5px",
                                                 marginLeft: "10px"
                                             }}
-                                            // disabled={`${disable}`}
+                                            disabled={disable}
                                         >
                                             {
-                                                percent === 0 ? <p> Add Profile Picture</p> : percent === 100 ?
-                                                    <p>Uploaded</p> : <CircularProgressWithLabel value={percent}/>
+                                                percent === 0 ? <p> Change Profile Picture</p> : percent === 100 ?
+                                                    <p>Change</p> : <CircularProgressWithLabel value={percent}/>
                                             }
                                             <input
 
